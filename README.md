@@ -1,2 +1,2 @@
-# dlt_demo
+# dbt_demo
 Reliable data pipelines made easy
