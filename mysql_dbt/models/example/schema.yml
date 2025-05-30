@@ -1,0 +1,47 @@
+version: 2
+
+sources:
+  - name: classic_models
+    schema: classicmodels
+    description: "Sample database for classic models"
+    
+    tables: 
+      - name: orders
+        description: "Table containing order details"
+      - name: orderdetails
+        description: "Table containing details of each order"
+      - name: products
+        description: "Table containing product information"
+      - name: customers
+        description: "Table containing customer information"
+
+models:
+  - name: orders
+    config:
+      materialized: table
+      alias: orders_tbl
+  - name: orders_sub
+    config:
+      alias: order_sub_tbl
+  - name: orders_details
+    config:
+      materialized: view
+      alias: order_details_date
+  - name: high_value_customers
+    description: "Customers who have placed orders with total value exceeding 60000"
+    columns:
+      - name: customerNumber
+        description: "Unique identifier for the customer"
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              to: source('classic_models', 'customers')
+              field: customerNumber
+      - name: customerName
+        description: "Name of the customer"
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: "customerNumber > 0"
